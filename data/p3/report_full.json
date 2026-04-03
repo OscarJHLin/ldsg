@@ -1,0 +1,18 @@
+{
+  "workspace_resonance": {
+    "tests": 5,
+    "detected": 3,
+    "rate": "60%",
+    "passed": true
+  },
+  "promotion_mechanism": {
+    "dual_criteria": "freq≥30 + time(≤7d or candidate≥30d)",
+    "emergency_channel": true,
+    "passed": true
+  },
+  "degradation_mechanism": {
+    "trigger": ">90d inactive + freq<50",
+    "passed": true
+  },
+  "overall": true
+}

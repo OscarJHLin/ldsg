@@ -1,0 +1,29 @@
+{
+  "multi_turn_memory": {
+    "work_return": "anchor=回到项目A，你觉得我",
+    "detail_recall": "context=6",
+    "passed": true
+  },
+  "real_time_promotion": {
+    "promoted_layer": "L2",
+    "passed": true
+  },
+  "creative_association": {
+    "cross_domain_found": true,
+    "path": [
+      "家庭",
+      "时间",
+      "健康",
+      "学习",
+      "工作",
+      "压力"
+    ],
+    "passed": true
+  },
+  "overall_metrics": {
+    "total_turns": 6,
+    "topic_switches": 0,
+    "memory_retention_rate": "100%",
+    "system_coherence": "stable"
+  }
+}

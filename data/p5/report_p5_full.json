@@ -1,0 +1,42 @@
+{
+  "multi_anchor_system": {
+    "primary": {
+      "weight": 0.6,
+      "depth": 3,
+      "mode": "focused"
+    },
+    "secondary": {
+      "weight": 0.25,
+      "depth": 1,
+      "mode": "scan"
+    },
+    "tertiary": {
+      "weight": 0.15,
+      "depth": 0,
+      "mode": "bridge"
+    }
+  },
+  "dynamic_compression_stack": {
+    "clear_zone": {
+      "max": 3,
+      "detail": "full_subgraph",
+      "latency": "instant"
+    },
+    "compressed_zone": {
+      "max": 6,
+      "detail": "summary→clue",
+      "latency": "2-3s / 5s+"
+    },
+    "forgetting_zone": {
+      "mechanism": "activation_below_threshold",
+      "msg_unchanged": true
+    }
+  },
+  "cascade_mechanism": {
+    "step_1": "clear_full → compressed_summary",
+    "step_2": "compressed_summary → compressed_clue",
+    "step_3": "compressed_clue → forgotten (栈清除)",
+    "msg_unchanged": true
+  },
+  "overall": true
+}

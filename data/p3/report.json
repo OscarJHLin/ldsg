@@ -1,0 +1,24 @@
+{
+  "resonance_detection": {
+    "tests": 5,
+    "detected": 3,
+    "rate": "60%",
+    "passed": true
+  },
+  "progressive_consolidation": {
+    "full_count": 14,
+    "skeleton_count": 4,
+    "cues_count": 1,
+    "skeleton_concepts": [
+      "孩子",
+      "跑步",
+      "项目A",
+      "压力"
+    ],
+    "cue_concepts": [
+      "跑步"
+    ],
+    "passed": true
+  },
+  "overall": true
+}

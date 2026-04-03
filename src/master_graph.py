@@ -316,15 +316,27 @@ class MasterSpatialGraph:
     MAX_PROJECTION = 3  # 投影空间最多同时 3 个子图
 
     def load_into_projection(self, sg_id: str) -> bool:
-        """将子图加载到投影空间（工作台）"""
+        """将子图加载到投影空间（工作台）
+
+        规则：
+        - 已加载的子图直接返回 True（不做重复处理）
+        - 容量满时，新子图进入 → evict 权重最低的已有子图（赢家是新的）
+        - re-add 时，新子图权重 > 旧最低权重 → evict 旧最低，新 append
+          新子图权重 <= 旧最低权重 → 新 append（超过容量触发下一次 evict）
+        """
         if sg_id not in self._subgraphs:
             return False
         if sg_id in self._projection_subgraphs:
-            return True  # 已在投影空间
+            # 已加载，直接更新激活时间
+            sg = self._subgraphs[sg_id]
+            sg.last_activated = time.time()
+            return True
 
-        # 容量检查：超过 3 个则挤出权重最低的
+        new_sg = self._subgraphs[sg_id]
+        new_weight = new_sg.weight
+
+        # 如果容量已满，evict 权重最低的已有子图
         if len(self._projection_subgraphs) >= self.MAX_PROJECTION:
-            # 找到权重最低的
             min_weight = float("inf")
             min_id = None
             for sid in self._projection_subgraphs:
@@ -332,23 +344,24 @@ class MasterSpatialGraph:
                 if sg and sg.weight < min_weight:
                     min_weight = sg.weight
                     min_id = sid
+            # 新子图权重 <= 旧最低：不 evict 新（而是 evict 最弱的已有）
+            # 这个分支：新进来 evict 旧的最低，新 append
             if min_id:
                 self._projection_subgraphs.remove(min_id)
                 self._projection_index.pop(min_id, None)
 
         self._projection_subgraphs.append(sg_id)
-        sg = self._subgraphs[sg_id]
-        sg.last_activated = time.time()
+        new_sg.last_activated = time.time()
 
         # 更新索引表
         self._projection_index[sg_id] = {
             "position": len(self._projection_subgraphs) - 1,
-            "summary": f"任务: {sg.task_id}, 节点数: {len(sg.nodes)}",
-            "node_count": len(sg.nodes),
-            "weight": sg.weight,
+            "summary": f"任务: {new_sg.task_id}, 节点数: {len(new_sg.nodes)}",
+            "node_count": len(new_sg.nodes),
+            "weight": new_sg.weight,
         }
 
-        self._save_subgraph(sg)
+        self._save_subgraph(new_sg)
         self._save_projection()
         return True
 
@@ -389,3 +402,12 @@ class MasterSpatialGraph:
             self._projection_index = data.get("index", {})
         except Exception:
             pass
+
+    def remove_from_projection(self, sg_id: str) -> bool:
+        """手动将子图从投影空间移除"""
+        if sg_id not in self._projection_subgraphs:
+            return False
+        self._projection_subgraphs.remove(sg_id)
+        self._projection_index.pop(sg_id, None)
+        self._save_projection()
+        return True

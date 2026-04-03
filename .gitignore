@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Data files with potentially private content
+*.pkl
+*.pickle
+
+# Model cache (downloaded separately)
+models/
+
+# Logs
+*.log
+*.log.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Secrets (should never be committed)
+.env
+*.pem
+*.key
+credentials.json
+secrets.json
